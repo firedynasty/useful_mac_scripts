@@ -1,0 +1,17 @@
+on run {input, parameters}
+	try
+		set isMuted to do shell script "osascript -e 'output muted of (get volume settings)'"
+
+		if isMuted is "true" then
+			do shell script "osascript -e 'set volume without output muted'"
+			display notification "Unmuted" with title "Volume"
+		else
+			do shell script "osascript -e 'set volume with output muted'"
+			display notification "Muted" with title "Volume"
+		end if
+
+	on error errMsg
+		display notification errMsg with title "Volume Error"
+	end try
+	return input
+end run

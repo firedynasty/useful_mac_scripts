@@ -1,0 +1,24 @@
+on run {input, parameters}
+    if (count of input) = 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Build markdown content
+    set mdContent to ""
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+        set fileName to do shell script "basename " & quoted form of filePath
+        set nameNoExt to do shell script "echo " & quoted form of fileName & " | sed 's/\\.[^.]*$//'"
+        set mdContent to mdContent & linefeed & linefeed & "![" & nameNoExt & "](" & fileName & ")" & linefeed & linefeed & "**Notes:** " & linefeed & linefeed
+    end repeat
+
+    -- Copy to clipboard
+    set the clipboard to mdContent
+
+    -- Notify
+    set fileCount to (count of input) as string
+    display notification fileCount & " image(s) copied as Markdown to clipboard" with title "Done"
+
+    return input
+end run

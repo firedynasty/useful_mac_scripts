@@ -1,0 +1,126 @@
+{
+    "description": "New Rule (change left_shift+caps_lock to page_down, right_shift+caps_lock to left_command+mission_control)",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "left_option",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "3",
+                    "modifiers": ["shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "delete_forward",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "down_arrow",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "non_us_pound",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "down_arrow",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f4",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_record_audio.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f3",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "4",
+                    "modifiers": ["shift", "command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f5",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_run_diff_script.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f6",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_write_to_file.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f7",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "open /Users/stanleytan/desktop/admin_code/for_karabiner_add_classical.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f3",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_screencapture.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "home",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_activate_finder.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "backslash",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "key_code": "up_arrow",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "end",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/desktop/admin_code/for_karabiner_get_Finder_with_close.scpt" }],
+            "type": "basic"
+        }
+    ]
+}

@@ -1,0 +1,39 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set classicalFile to "/Users/stanleytan/Music/studyClassical/Classical Music for Studying [mdJU5ogrPMY].m4a"
+    set classicalDur to "8877"
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set baseName to do shell script "f=" & quoted form of filePath & "; echo \"${f%.*}\""
+        set outputPath100 to quoted form of (baseName & "_classical_100.mp3")
+        set outputPath50 to quoted form of (baseName & "_classical_50.mp3")
+
+        -- Get duration of input file, pick random start point in classical file
+        -- Generate two outputs: 100% and 50% classical volume
+        set shellScript to shellScript & "echo '=== Processing: " & filePath & " ===' && "
+        set shellScript to shellScript & "INPUT_DUR=$(/opt/homebrew/bin/ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 " & quoted form of filePath & ") && "
+        set shellScript to shellScript & "INPUT_DUR_INT=$(printf '%.0f' \"$INPUT_DUR\") && "
+        set shellScript to shellScript & "MAX_START=$((" & classicalDur & " - INPUT_DUR_INT - 1)) && "
+        set shellScript to shellScript & "if [ $MAX_START -lt 0 ]; then MAX_START=0; fi && "
+        set shellScript to shellScript & "RAND_START=$((RANDOM % MAX_START)) && "
+        set shellScript to shellScript & "echo \"Using classical segment starting at ${RAND_START}s for ${INPUT_DUR_INT}s\" && "
+        set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -y -i " & quoted form of filePath & " -ss $RAND_START -t $INPUT_DUR -i " & quoted form of classicalFile & " -filter_complex \"[1:a]volume=1.0[bg];[0:a][bg]amix=inputs=2:duration=first:dropout_transition=3\" -ac 2 -b:a 192k " & outputPath100 & " && "
+        set shellScript to shellScript & "echo '=== Done: 100% volume ===' && "
+        set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -y -i " & quoted form of filePath & " -ss $RAND_START -t $INPUT_DUR -i " & quoted form of classicalFile & " -filter_complex \"[1:a]volume=0.5[bg];[0:a][bg]amix=inputs=2:duration=first:dropout_transition=3\" -ac 2 -b:a 192k " & outputPath50 & " && "
+        set shellScript to shellScript & "echo '=== Done: 50% volume ===' ; "
+
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

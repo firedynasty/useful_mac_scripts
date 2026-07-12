@@ -1,0 +1,12 @@
+{
+            "from": { "key_code": "f6" },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_activate_word_chooser.scpt" }],
+            "type": "basic"
+        },
+        {
+            "from": { "key_code": "f4" },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_activate_word.scpt" }],
+            "type": "basic"
+        },
+
+

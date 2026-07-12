@@ -1,0 +1,38 @@
+on run {input, parameters}
+	try
+		set isPlaying to do shell script "pgrep mpg123 > /dev/null 2>&1 && echo 'yes' || echo 'no'"
+
+		if isPlaying is "yes" then
+			do shell script "killall mpg123 2>/dev/null; killall gtts-cli 2>/dev/null; rm -f /tmp/screenshot_tts.mp3"
+			display notification "Stopped" with title "Screenshot Reader"
+		else
+			set latestFile to do shell script "ls -t ~/Desktop/*.png 2>/dev/null | head -n1"
+
+			if latestFile is "" then
+				display notification "No PNG screenshots found on Desktop" with title "Screenshot Reader"
+				return input
+			end if
+
+			set fileName to do shell script "basename " & quoted form of latestFile
+			display notification "Reading: " & fileName with title "Screenshot Reader"
+
+			set ocrText to do shell script "/opt/homebrew/bin/tesseract " & quoted form of latestFile & " stdout 2>/dev/null"
+			set ocrText to do shell script "echo " & quoted form of ocrText & " | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'"
+
+			if ocrText is "" then
+				display notification "No text found in screenshot" with title "Screenshot Reader"
+				return input
+			end if
+
+			set the clipboard to ocrText
+
+			do shell script "/Users/stanleytan/anaconda3/bin/gtts-cli " & quoted form of ocrText & " --output /tmp/screenshot_tts.mp3 2>/dev/null"
+			do shell script "/opt/homebrew/bin/mpg123 /tmp/screenshot_tts.mp3 2>/dev/null &"
+			do shell script "rm -f /tmp/screenshot_tts.mp3"
+		end if
+
+	on error errMsg
+		display notification errMsg with title "Screenshot Reader Error"
+	end try
+	return input
+end run

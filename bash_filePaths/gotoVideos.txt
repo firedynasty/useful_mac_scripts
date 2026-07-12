@@ -1,0 +1,6 @@
+/Users/stanleytan/Desktop/admin_code/bash_filePaths/gotoVideos.txt
+/Users/stanleytan/onedrive/documents/learning_notes/hobbies/basketball/bball.mov
+/Users/stanleytan/onedrive/documents/learning_notes/hobbies/basketball/bball2.mov
+/Users/stanleytan/onedrive/documents/learning_notes/hobbies/basketball/
+/Users/stanleytan/Desktop/admin_code/openSlideshow
+5,make sure extra filler here

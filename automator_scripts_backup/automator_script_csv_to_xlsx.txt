@@ -1,0 +1,21 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set shellScript to shellScript & "echo '=== Converting: " & filePath & " ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/data-time_tracker/time_tracker.py " & quoted form of filePath & " ; "
+
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

@@ -1,0 +1,21 @@
+on run {input, parameters}
+    if (count of input) = 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set scriptPath to "/Users/stanleytan/Documents/technical/github/screenshot_server/upload_to_oracle.sh"
+
+    set fileArgs to ""
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+        set fileArgs to fileArgs & " " & quoted form of filePath
+    end repeat
+
+    set shellScript to "bash " & quoted form of scriptPath & fileArgs
+
+    tell application "Terminal"
+        activate
+        do script shellScript
+    end tell
+end run

@@ -1,0 +1,16 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set dropboxDest to text returned of (display dialog "Dropbox destination path:" default answer "/screenshots")
+
+    set folderPath to POSIX path of (item 1 of input)
+    set shellScript to "/opt/homebrew/bin/rclone copy " & quoted form of folderPath & " \"dropbox:" & dropboxDest & "\" --include '*.{png,jpg,jpeg,gif,bmp,webp,tiff,svg,heic}' --progress"
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

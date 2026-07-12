@@ -1,0 +1,6 @@
+ffmpeg -i bball3.mp4 -vf fps=1 frame_%04d.jpg. (every second)
+
+
+ffmpeg -i bball2.mp4 -vf fps=4 frame_%04d.jpg. (every 0.25)
+
+

@@ -1,0 +1,45 @@
+Summary 02/19/2026 - Mic Recording AppleScript for Karabiner
+
+GOAL:
+Create a toggle AppleScript (mapped to Karabiner shortcut Cmd+Shift+7) that:
+- Press once: starts recording from MacBook Air Microphone
+- Press again: stops recording, converts to MP3, saves to ~/Downloads/spokenMp3Files/
+
+USE CASE:
+Record yourself speaking Chinese text (or any language) and save as MP3 for review.
+
+FILES CREATED:
+- /Users/stanleytan/desktop/admin_code/for_karabiner_record_mic_to_mp3.applescript (Karabiner version)
+- /Users/stanleytan/desktop/admin_code/for_karabiner_record_mic_to_mp3_keybinding.txt (Karabiner JSON config)
+- /Users/stanleytan/desktop/admin_code/test_audio_record.applescript (test version with dialogs)
+
+WHAT WORKS:
+- Recording with sox directly in Terminal: NO buzz (e.g. your existing `re` or `reco` commands)
+- sox -t coreaudio "MacBook Air Microphone" /tmp/test.wav  <-- clean audio
+- PID file approach (/tmp/mic_recorder.pid) for toggle detection works
+- WAV to MP3 conversion via ffmpeg works
+
+ISSUE TO TROUBLESHOOT:
+- Running sox (or ffmpeg) in background from AppleScript produces a periodic buzz/thump sound
+- ffmpeg avfoundation: buzz
+- sox via helper script with &: buzz
+- sox directly in Terminal: NO buzz
+- Root cause: backgrounding the audio process (via & in shell) causes audio buffer artifacts
+- Latest attempt: launch sox inside a real Terminal.app window via AppleScript `do script` -- not yet tested
+
+NEXT STEPS:
+1. Test the Terminal.app approach in test_audio_record.applescript (sox runs in real terminal session)
+2. If that works, update for_karabiner_record_mic_to_mp3.applescript with same approach
+3. Set up the Karabiner keybinding (Cmd+Shift+7) or Services keyboard shortcut
+4. Alternatively, could try: nohup, screen/tmux, or launchd to run sox without buzz
+
+EXISTING RELATED SCRIPTS:
+- for_karabiner_speak_screenshot.applescript (OCR screenshot + TTS, Cmd+Shift+8)
+- for_karabiner_speak_spanish_chinese.scpt (clipboard text to MP3 via gtts-cli)
+- zshrc functions: recordnow(), re(), reco() -- all use sox, all work fine
+
+DEPENDENCIES:
+- sox (/opt/homebrew/bin/sox)
+- ffmpeg (/opt/homebrew/bin/ffmpeg) - for WAV to MP3 conversion
+- mpg123 (/opt/homebrew/bin/mpg123) - for playback
+- Output dir: ~/Downloads/spokenMp3Files/

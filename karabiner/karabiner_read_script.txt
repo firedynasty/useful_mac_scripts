@@ -1,0 +1,22 @@
+F8 — Read clipboard (English→Spanish→Hebrew, press again to cycle/stop):
+
+{
+    "from": { "key_code": "f8" },
+    "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_read_clipboard_tts.scpt &" }],
+    "type": "basic"
+}
+
+F7 — Cmd+C (copy) + stop reading:
+
+
+F6 — Language control (cycle F8: English/Spanish/Hebrew, cycle F9: Cantonese/Mandarin/Korean):
+
+F5 — Toggle Claude / Chrome:
+
+
+F9 — Read clipboard (Cantonese→Mandarin→Korean, press again to cycle/stop):
+
+
+Cmd+Space — Chrome: Cmd+C, Terminals: excluded, Everything else: Enter
+(Chrome rule must come first)
+

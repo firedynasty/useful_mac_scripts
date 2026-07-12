@@ -1,0 +1,159 @@
+{
+    "description": "New Rule (change left_shift+caps_lock to page_down, right_shift+caps_lock to left_command+mission_control)",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": {
+                    "mandatory": [
+                        "left_shift"
+                    ],
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "key_code": "page_down",
+                    "modifiers": []
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": {
+                    "mandatory": [
+                        "right_shift"
+                    ],
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "apple_vendor_keyboard_key_code": "mission_control",
+                    "modifiers": [
+                        "left_command"
+                    ]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f4",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "afplay '/Users/stanleytan/documents/brilliant1a.mp3'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f5",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "osascript /Users/stanleytan/desktop/admin_code/play_videos.scpt"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f6",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "osascript /Users/stanleytan/desktop/admin_code/play_music.scpt"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f7",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open /Users/stanleytan/desktop/admin_code/locations/01-notes.md"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f7",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Terminal'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f8",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Terminal'"
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "f9",
+                "modifiers": {
+                    "optional": [
+                        "any"
+                    ]
+                }
+            },
+            "to": [
+                {
+                    "shell_command": "open -a 'Finder'"
+                }
+            ],
+            "type": "basic"
+        }
+    ]
+}

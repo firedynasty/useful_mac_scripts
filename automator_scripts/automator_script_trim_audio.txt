@@ -1,0 +1,29 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set startTime to text returned of (display dialog "Start time (MM:SS):" default answer "0:00")
+    set endTime to text returned of (display dialog "End time (MM:SS or blank for rest):" default answer "")
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- Generate output path with _1, _2, etc. suffix
+        set outputPath to do shell script "f=" & quoted form of filePath & "; name=\"${f%.*}\"; ext=\"${f##*.}\"; n=1; while [ -e \"${name}_${n}.${ext}\" ]; do n=$((n+1)); done; echo \"${name}_${n}.${ext}\""
+
+        if endTime is not "" then
+            set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -ss " & startTime & " -to " & endTime & " -i " & quoted form of filePath & " -c copy " & quoted form of outputPath & " ; "
+        else
+            set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -ss " & startTime & " -i " & quoted form of filePath & " -c copy " & quoted form of outputPath & " ; "
+        end if
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

@@ -1,0 +1,6 @@
+/Users/stanleytan/desktop/admin_code/bash_filePaths/gotoVideos.txt
+bball1
+bball2
+bball directory with more videos
+open slideshow
+gotovideos (command)

@@ -1,0 +1,23 @@
+on run {input, parameters}
+    -- Check if input text is provided; if not, fall back to clipboard content
+    if input is not "" then
+        set fullText to input as text
+    else
+        set fullText to the clipboard
+    end if
+
+    if fullText is "" then
+        display dialog "No text selected or clipboard is empty." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Copy text to clipboard so the Python script can read it
+    set the clipboard to fullText
+
+    set shellScript to "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/textToSpeech/tts_to_mp3.py"
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

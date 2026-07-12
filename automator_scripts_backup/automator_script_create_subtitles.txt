@@ -1,0 +1,39 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Ask about timestamps
+    set tsChoice to button returned of (display dialog "Include timestamps?" buttons {"Cancel", "No", "Yes"} default button "Yes")
+    set tsFlag to ""
+    if tsChoice is "Yes" then
+        set tsFlag to " --timestamps"
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- Extract audio as compressed mono mp3
+        set baseName to do shell script "f=" & quoted form of filePath & "; echo \"${f%.*}\""
+        set audioPath to quoted form of (baseName & "_audio.mp3")
+
+        set shellScript to shellScript & "echo '=== Extracting audio from: " & filePath & " ===' && "
+        set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -y -i " & quoted form of filePath & " -vn -ar 16000 -ac 1 -b:a 32k " & audioPath & " && "
+
+        -- Transcribe with Groq
+        set shellScript to shellScript & "echo '=== Transcribing ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/textToSpeech/transcribe_groq.py " & audioPath & tsFlag & " && "
+
+        -- Clean up temp audio
+        set shellScript to shellScript & "rm -f " & audioPath & " ; "
+
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

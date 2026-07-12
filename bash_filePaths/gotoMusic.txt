@@ -1,0 +1,11 @@
+/Users/stanleytan/Desktop/admin_code/bash_filePaths/gotoMusic.txt
+/Users/stanleytan/documents/oceanwaves_300.mp3
+/Users/stanleytan/documents/gaming_sound_Sky high - Elektronomia.mp3
+https://www.youtube.com/watch?v=3sYWsbrZvIQ
+https://www.youtube.com/watch?v=vbiLeL2Q-Cs
+https://www.youtube.com/watch?v=I0R12yMVXxU
+https://music.amazon.com/browse/music-items/home/recommendation/mp3-subscription-gateway_mp3YourHeaviestListeningStrategy
+https://www.youtube.com/watch?v=nqR-SWWlJH0&t=81s
+/Users/stanleytan/documents/shinLim.mp3
+/Users/stanleytan/documents/codingPlaylist.m3u
+5,make sure extra filler here

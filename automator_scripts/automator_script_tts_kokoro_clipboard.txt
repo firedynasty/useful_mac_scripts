@@ -1,0 +1,15 @@
+on run {input, parameters}
+    set clipText to the clipboard
+
+    if clipText is "" then
+        display dialog "Clipboard is empty." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/textToSpeech/tts_to_mp3.py " & quoted form of clipText
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

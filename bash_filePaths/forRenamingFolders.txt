@@ -1,0 +1,7 @@
+.
+./basketball
+./basketball_2
+./chess
+./guitar
+./piano
+./singing

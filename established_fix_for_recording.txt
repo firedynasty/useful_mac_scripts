@@ -1,0 +1,13 @@
+Here's a summary of all changes made across the three iterations:
+
+**1. Removed the Terminal window popup**
+The original script used `tell application "Terminal" to do script` to run sox, which spawned a new terminal window every time. Replaced with a background shell process using `&` at the end of the `do shell script` command. Sox now runs silently in the background, with logs going to `/tmp/mic_recorder.log` instead of a visible terminal.
+
+**2. Added Cancel ? Clipboard behaviour**
+When you cancel the dialog, the script now stops and discards the current recording, then finds the most recently modified `.txt` file in `spokenMp3Files` using `ls -t *.txt | head -1`, reads its contents, and copies it to the clipboard. A notification confirms which file was pulled.
+
+**3. Fixed the Cancel error trap**
+AppleScript treats clicking Cancel on a dialog as an error ("User canceled") rather than a button return value, so the original `else if userChoice is "Cancel"` branch was never reached Ñ it jumped straight to `on error` instead. Fixed by wrapping the dialog in its own inner `try/on error` block that catches the cancel error and manually sets `userChoice to "Cancel"`, allowing execution to continue normally into the else branch.
+
+**4. Updated dialog hint text**
+Added a line to the recording dialog Ñ `? Cancel = copy latest saved txt to clipboard` Ñ so the behaviour is self-documenting without needing to remember it.

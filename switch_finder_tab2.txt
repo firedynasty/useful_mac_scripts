@@ -1,0 +1,53 @@
+-- what this does is lets me open the current tab to the other tabs that are opened if there are more than 2 will allow for choice
+
+tell application "Finder"
+	activate
+
+	set allWindows to every Finder window
+
+	if (count of allWindows) is 0 then
+		display dialog "No Finder windows are open." buttons {"OK"} default button "OK"
+		return
+	end if
+
+	set frontWin to front Finder window
+	set frontWinID to id of frontWin
+
+	set tabNames to {}
+	set tabIDs to {}
+
+	repeat with w in allWindows
+		set wID to id of w
+		if wID is not frontWinID then
+			try
+				set thisPath to POSIX path of ((target of w) as alias)
+				set folderName to name of (target of w)
+				set displayName to folderName & " - " & thisPath
+			on error
+				set displayName to name of w
+			end try
+			set end of tabNames to displayName
+			set end of tabIDs to wID
+		end if
+	end repeat
+
+	if (count of tabNames) is 0 then
+		display dialog "No other tabs found." buttons {"OK"} default button "OK"
+		return
+	end if
+
+	set choice to (choose from list tabNames with prompt "Switch to which Finder tab?" with title "Tab Switcher")
+	if choice is false then return
+
+	set chosenName to (item 1 of choice)
+
+	repeat with i from 1 to (count of tabNames)
+		if (item i of tabNames) is chosenName then
+			set targetWinID to (item i of tabIDs)
+			set targetWindow to (first Finder window whose id is targetWinID)
+			set destFolder to (target of targetWindow) as alias
+			set target of frontWin to destFolder
+			exit repeat
+		end if
+	end repeat
+end tell

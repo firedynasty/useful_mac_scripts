@@ -1,0 +1,848 @@
+{
+    "description": "New Rule (change left_shift+caps_lock to page_down, right_shift+caps_lock to left_command+mission_control)",
+    "manipulators": [
+        {
+            "from": {
+                "key_code": "s",
+                "modifiers": { "mandatory": ["left_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "s",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "q",
+                "modifiers": { "mandatory": ["left_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "q",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "v",
+                "modifiers": { "mandatory": ["left_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "v",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.google\\.Chrome$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "non_us_pound" },
+            "to": [
+                {
+                    "key_code": "3",
+                    "modifiers": ["shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.google\\.Chrome$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "p",
+                "modifiers": { "mandatory": ["command", "option"] }
+            },
+            "to": [{ "key_code": "return_or_enter" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.microsoft\\.edgemac$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "p",
+                "modifiers": { "mandatory": ["command", "option"] }
+            },
+            "to": [
+                {
+                    "key_code": "open_bracket",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^net\\.ankiweb\\.dtop$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "up_arrow" },
+            "to": [{ "key_code": "1" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^net\\.ankiweb\\.dtop$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "page_down" },
+            "to": [{ "key_code": "4" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.sublimetext\\.4$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "down_arrow",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [{ "key_code": "page_down" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.sublimetext\\.4$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "up_arrow",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [{ "key_code": "page_up" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^abnerworks\\.Typora$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "down_arrow",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [{ "key_code": "page_down" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^abnerworks\\.Typora$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "up_arrow",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [{ "key_code": "page_up" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "p",
+                "modifiers": { "mandatory": ["command", "option"] }
+            },
+            "to": [
+                {
+                    "key_code": "open_bracket",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "a",
+                "modifiers": { "mandatory": ["left_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "a",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.apple\\.Terminal$",
+                        "^com\\.googlecode\\.iterm2$",
+                        "^io\\.alacritty$"
+                    ],
+                    "type": "frontmost_application_unless"
+                }
+            ],
+            "from": {
+                "key_code": "c",
+                "modifiers": { "mandatory": ["left_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.apple\\.Terminal$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "open_bracket",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [
+                {
+                    "key_code": "open_bracket",
+                    "modifiers": ["control"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^abnerworks\\.Typora$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "escape" },
+            "to": [
+                {
+                    "key_code": "w",
+                    "modifiers": ["left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.sublimetext\\.4$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "escape" },
+            "to": [
+                {
+                    "key_code": "w",
+                    "modifiers": ["left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "spacebar",
+                "modifiers": { "mandatory": ["right_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "8",
+                    "modifiers": ["left_command", "left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "l",
+                "modifiers": { "mandatory": ["right_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "l",
+                    "modifiers": ["left_shift", "left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "l",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "l",
+                    "modifiers": ["left_shift", "left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "c",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["left_control", "left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "delete_or_backspace",
+                "modifiers": { "mandatory": ["right_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "6",
+                    "modifiers": ["left_shift", "left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "backslash" },
+            "to": [{ "key_code": "tab" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "n",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [
+                {
+                    "key_code": "8",
+                    "modifiers": ["left_command", "left_shift", "left_option"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "period",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [
+                {
+                    "key_code": "6",
+                    "modifiers": ["left_option", "left_command", "left_shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "delete_or_backspace",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "6",
+                    "modifiers": ["left_shift", "left_command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": { "key_code": "f13" },
+            "to": [{ "key_code": "a" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.apple\\.Terminal$",
+                        "^com\\.googlecode\\.iterm2$",
+                        "^io\\.alacritty$"
+                    ],
+                    "type": "frontmost_application_unless"
+                }
+            ],
+            "from": {
+                "key_code": "down_arrow",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [{ "key_code": "return_or_enter" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "1",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/Desktop/admin_code/clipboard_append.sh" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "2",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to do script \"/Users/stanleytan/Desktop/admin_code/clipboard_clear.sh\"'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "3",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/bin/screenshot_float.sh" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "4",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/bin/kill_floats.sh" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.google\\.Chrome$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "right_arrow",
+                "modifiers": { "mandatory": ["right_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "tab",
+                    "modifiers": ["control"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.google\\.Chrome$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "left_arrow",
+                "modifiers": { "mandatory": ["right_control"] }
+            },
+            "to": [
+                {
+                    "key_code": "tab",
+                    "modifiers": ["control", "shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_unless",
+                    "value": 1
+                }
+            ],
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "set_variable": {
+                        "name": "mouse_button_mode",
+                        "value": 1
+                    }
+                },
+                { "shell_command": "osascript -e 'display notification \"Mouse mode ON (1=copy, 2=speak clipboard, 3=click, 4=open, ⌥L=pagedn, ⌘R=1,⌥R=2)\" with title \"Karabiner\"'" }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [
+                {
+                    "set_variable": {
+                        "name": "mouse_button_mode",
+                        "value": 0
+                    }
+                },
+                { "shell_command": "osascript -e 'display notification \"Mouse mode OFF\" with title \"Karabiner\"'" }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "1" },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "2" },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard.py" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "3" },
+            "to": [{ "pointing_button": "button1" }],
+            "type": "basic"
+        },
+        { "conditions": [ { "name": "mouse_button_mode", "type": "variable_if", "value": 1 } ], "from": { "key_code": "4" }, "to": [{ "key_code": "o", "modifiers": ["left_command"] }], "type": "basic" },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "left_option" },
+            "to": [{ "key_code": "page_down" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "right_command" },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "right_option" },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard.py" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "8",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard.py" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "8",
+                "modifiers": { "mandatory": ["command", "shift", "option"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard.py" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "9",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard_zh.py" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "0",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/anaconda3/bin/python /Users/stanleytan/Documents/technical/python/textToSpeech/speak_clipboard_es.py" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "7",
+                "modifiers": { "mandatory": ["command"] }
+            },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": { "key_code": "f6" },
+            "to": [
+                {
+                    "key_code": "j",
+                    "modifiers": ["left_command", "left_option", "left_shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "right_option",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "key_code": "right_option" }],
+            "to_if_alone": [{ "pointing_button": "button2" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.apple\\.finder$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "z",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "open_bracket",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.apple\\.finder$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": {
+                "key_code": "spacebar",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "down_arrow",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "spacebar",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "w",
+                    "modifiers": ["command"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.logos\\.desktop\\.logos$"
+                    ],
+                    "type": "frontmost_application_unless"
+                }
+            ],
+            "from": {
+                "key_code": "r",
+                "modifiers": { "mandatory": ["left_command"] }
+            },
+            "to": [
+                {
+                    "key_code": "j",
+                    "modifiers": ["left_command", "left_option", "left_shift"]
+                }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "right_shift",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "key_code": "right_shift" }],
+            "to_if_alone": [
+                {
+                    "key_code": "8",
+                    "modifiers": ["left_command", "left_option"]
+                }
+            ],
+            "type": "basic"
+        }
+    ]
+}

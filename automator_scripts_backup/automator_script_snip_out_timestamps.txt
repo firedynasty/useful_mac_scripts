@@ -1,0 +1,64 @@
+on run {input, parameters}
+    if (count of input) > 0 then
+        set txtFile to POSIX path of (choose file with prompt "Select timestamps file (segments to remove):" of type {"txt"})
+
+        set speedChoice to button returned of (display dialog "Output speed?" buttons {"0.5x (slow motion)", "1x (normal)"} default button "1x (normal)")
+
+        set shellScript to ""
+
+        if speedChoice is "0.5x (slow motion)" then
+            set ffmpegTail to "-vf 'setpts=2*PTS' -af atempo=0.5 -c:v hevc_videotoolbox"
+        else
+            set ffmpegTail to "-c:v hevc_videotoolbox -c:a copy"
+        end if
+
+        repeat with selectedFile in input
+            set filePath to POSIX path of selectedFile
+
+            set shellScript to shellScript & "f=" & quoted form of filePath & "; " & ¬
+                "ext=\"${f##*.}\"; " & ¬
+                "basename=\"${f##*/}\"; basename=\"${basename%.*}\"; " & ¬
+                "dir=\"${f%/*}\"; " & ¬
+                "dateStr=$(date +%m%d); " & ¬
+                "outDir=\"${dir}/${dateStr}-${basename}\"; " & ¬
+                "mkdir -p \"$outDir\"; " & ¬
+                "duration=$(/opt/homebrew/bin/ffprobe -v error -show_entries format=duration -of csv=p=0 \"$f\" | awk '{printf \"%d\", $1}'); " & ¬
+                "starts=(); ends=(); " & ¬
+                "while IFS=, read -r startTime endTime || [ -n \"$startTime\" ]; do " & ¬
+                "startTime=$(echo \"$startTime\" | tr -d '[:space:]'); " & ¬
+                "endTime=$(echo \"$endTime\" | tr -d '[:space:]'); " & ¬
+                "sSecs=$(echo \"$startTime\" | awk -F: '{print $1*60+$2}'); " & ¬
+                "eSecs=$(echo \"$endTime\" | awk -F: '{print $1*60+$2}'); " & ¬
+                "starts+=(\"$sSecs\"); ends+=(\"$eSecs\"); " & ¬
+                "done < " & quoted form of txtFile & "; " & ¬
+                "n=1; prev=0; total=${#starts[@]}; i=0; " & ¬
+                "while [ $i -lt $total ]; do " & ¬
+                "if [ \"$prev\" -lt \"${starts[$i]}\" ]; then " & ¬
+                "dur=$((${starts[$i]} - prev)); " & ¬
+                "while [ -e \"${outDir}/clip_${n}.${ext}\" ]; do n=$((n+1)); done; " & ¬
+                "if [ \"$prev\" -eq 0 ]; then " & ¬
+                "/opt/homebrew/bin/ffmpeg -nostdin -i \"$f\" -t \"$dur\" " & ffmpegTail & " \"${outDir}/clip_${n}.${ext}\"; " & ¬
+                "else " & ¬
+                "/opt/homebrew/bin/ffmpeg -nostdin -ss \"$prev\" -i \"$f\" -t \"$dur\" " & ffmpegTail & " \"${outDir}/clip_${n}.${ext}\"; " & ¬
+                "fi; " & ¬
+                "n=$((n+1)); " & ¬
+                "fi; " & ¬
+                "prev=${ends[$i]}; " & ¬
+                "i=$((i+1)); " & ¬
+                "done; " & ¬
+                "if [ \"$prev\" -lt \"$duration\" ]; then " & ¬
+                "dur=$((duration - prev)); " & ¬
+                "while [ -e \"${outDir}/clip_${n}.${ext}\" ]; do n=$((n+1)); done; " & ¬
+                "/opt/homebrew/bin/ffmpeg -nostdin -ss \"$prev\" -i \"$f\" -t \"$dur\" " & ffmpegTail & " \"${outDir}/clip_${n}.${ext}\"; " & ¬
+                "fi; " & ¬
+                "echo '=== Done ===' " & linefeed
+        end repeat
+
+        tell application "Terminal"
+            activate
+            do script shellScript in front window
+        end tell
+    else
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+    end if
+end run

@@ -1,0 +1,22 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- Generate output path as .mp3 with _1, _2, etc. suffix
+        set outputPath to do shell script "f=" & quoted form of filePath & "; name=\"${f%.*}\"; ext=\"mp3\"; n=1; while [ -e \"${name}_${n}.${ext}\" ]; do n=$((n+1)); done; echo \"${name}_${n}.${ext}\""
+
+        set shellScript to shellScript & "/opt/homebrew/bin/ffmpeg -i " & quoted form of filePath & " -vn -q:a 2 " & quoted form of outputPath & " ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

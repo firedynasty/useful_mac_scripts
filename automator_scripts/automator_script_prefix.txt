@@ -1,0 +1,43 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set action to button returned of (display dialog "Add or remove a prefix?" buttons {"Cancel", "Remove Prefix", "Add Prefix"} default button "Add Prefix")
+
+    set prefix to text returned of (display dialog "Enter the prefix:" default answer "" buttons {"Cancel", "OK"} default button "OK")
+
+    if prefix is "" then
+        display dialog "No prefix entered." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+        set fileName to do shell script "basename " & quoted form of filePath
+        set fileDirectory to do shell script "dirname " & quoted form of filePath
+
+        if action is "Add Prefix" then
+            set newFileName to prefix & fileName
+        else
+            -- Remove prefix if the filename starts with it
+            if fileName starts with prefix then
+                set newFileName to text ((length of prefix) + 1) thru -1 of fileName
+            else
+                set newFileName to fileName
+            end if
+        end if
+
+        if newFileName is not fileName then
+            set newFilePath to fileDirectory & "/" & newFileName
+            try
+                do shell script "mv " & quoted form of filePath & " " & quoted form of newFilePath
+            on error errMsg
+                display dialog "Error renaming: " & fileName & return & errMsg buttons {"OK"} default button "OK"
+            end try
+        end if
+    end repeat
+
+    display dialog "Done." buttons {"OK"} default button "OK"
+end run
