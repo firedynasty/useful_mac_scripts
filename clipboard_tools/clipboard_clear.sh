@@ -10,15 +10,15 @@ if [ -f "$FILE" ]; then
     echo ""
     echo "(Cmd+3 to Quick Look peek)"
     echo ""
-    read -p "Copy to clipboard and clear? (y/n/a=accumulator): " choice
+    read -p "(y=copy+clear/n=keep/a=accumulator): " choice
     if [[ "$choice" == "y" || "$choice" == "Y" ]]; then
         cat "$FILE" | pbcopy
-        pbpaste | pandoc --from markdown --to plain --no-highlight | pbcopy
+        pbpaste | pandoc --from markdown-tex_math_dollars --to plain --no-highlight | pbcopy
         rm "$FILE"
         echo "Converted to plain text, copied to clipboard, and cleared."
     elif [[ "$choice" == "a" || "$choice" == "A" ]]; then
         cat "$FILE" | pbcopy
-        pbpaste | pandoc --from markdown --to plain --no-highlight | pbcopy
+        pbpaste | pandoc --from markdown-tex_math_dollars --to plain --no-highlight | pbcopy
         rm "$FILE"
         open "https://clipboard-manager-three.vercel.app/accumulator?import=1"
         echo "Copied to clipboard, cleared, and opened accumulator. Paste with auto-split."
@@ -27,4 +27,7 @@ if [ -f "$FILE" ]; then
     fi
 else
     echo "Nothing collected yet."
+    echo "(Use clipboard_collect_split.sh to open clipboard_collect.md chunks in Sublime tabs)"
 fi
+echo ""
+echo "Workflow: accumulate with 1/2 → use '4' (clipboard_collect_split) to open chunks in Sublime tabs"
