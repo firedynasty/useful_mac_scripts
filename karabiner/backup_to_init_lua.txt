@@ -1,0 +1,167 @@
+-- HAMMERSPOON CONFIG BACKUP
+-- Source: ~/.hammerspoon/init.lua
+-- Hammerspoon is a macOS automation tool that lets you write Lua scripts to control
+-- your Mac: bind hotkeys, run shell commands, show alerts, control audio, etc.
+-- Config lives at ~/.hammerspoon/init.lua and is reloaded via the menu bar icon.
+
+hs.hotkey.bind({"cmd", "ctrl", "shift"}, "m", function()
+    local output = hs.audiodevice.defaultOutputDevice()
+    output:setMuted(not output:muted())
+end)
+
+-- Dictation: F5 to start/stop recording → transcribe with whisper → AI cleanup → clipboard
+local recording = false
+local wavFile = "/tmp/mic_dictation_temp.wav"
+local textFile = "/tmp/mic_dictation_text.tmp"
+local recordJob = nil
+local whisperModel = "/opt/homebrew/share/whisper-cpp/ggml-base.bin"
+
+hs.hotkey.bind({}, "F5", function()
+  local output = hs.audiodevice.defaultOutputDevice()
+  if not recording then
+    recording = true
+    output:setMuted(true)
+    hs.alert.show("🎙 Recording...")
+    recordJob = hs.task.new("/opt/homebrew/bin/sox", nil,
+      {"-t", "coreaudio", "MacBook Air Microphone", "-r", "16000", "-c", "1", "-b", "16", wavFile})
+    recordJob:start()
+  else
+    recording = false
+    output:setMuted(false)
+    hs.alert.show("⏳ Transcribing...")
+    recordJob:terminate()
+
+    hs.timer.doAfter(1.5, function()
+      -- Step 1: Whisper transcription
+      hs.task.new("/bin/sh", function(code, stdout, stderr)
+        local text = (stdout or ""):match("^%s*(.-)%s*$")
+        if text and #text > 0 then
+          -- Write text to temp file so Python can read it safely (avoids shell escaping issues)
+          local f = io.open(textFile, "w")
+          f:write(text)
+          f:close()
+
+          -- Step 2: AI cleanup via Groq llama-3.3-70b-versatile
+          local pyScript = [[
+import json, urllib.request, os, sys
+
+text = open(']] .. textFile .. [[').read().strip()
+data = json.dumps({
+  'model': 'llama-3.3-70b-versatile',
+  'messages': [
+    {'role': 'system', 'content': 'You are a transcription corrector. Fix only obvious speech-to-text errors such as wrong words that sound similar (e.g. "tick" instead of "take"). Do not rephrase or add anything. Return only the corrected text.'},
+    {'role': 'user', 'content': text}
+  ]
+}).encode()
+
+req = urllib.request.Request(
+  'https://api.groq.com/openai/v1/chat/completions',
+  data=data,
+  headers={
+    'Authorization': 'Bearer ' + os.environ['GROQ_API_KEY'],
+    'Content-Type': 'application/json'
+  }
+)
+resp = json.loads(urllib.request.urlopen(req).read())
+print(resp['choices'][0]['message']['content'], end='')
+]]
+
+          hs.task.new("/bin/sh", function(code2, stdout2, stderr2)
+            local cleaned = (stdout2 or ""):match("^%s*(.-)%s*$")
+            if cleaned and #cleaned > 0 and cleaned ~= "null" then
+              hs.pasteboard.setContents(cleaned)
+            else
+              hs.pasteboard.setContents(text)  -- fallback to original whisper text
+            end
+            hs.eventtap.keyStroke({"cmd"}, "v")
+            os.remove(wavFile)
+            os.remove(textFile)
+          end, {"-c", "source ~/.zshrc && python3 -c '" .. pyScript:gsub("'", "'\\''") .. "'"}):start()
+
+        else
+          hs.alert.show("❌ No transcription")
+          os.remove(wavFile)
+        end
+      end, {"-c", "/opt/homebrew/bin/whisper-cli -m '" .. whisperModel .. "' -f '" .. wavFile .. "' --no-timestamps -l auto 2>/dev/null"}):start()
+    end)
+  end
+end)
+
+-- Dictation to file: ctrl+option+1 to start/stop → append to ~/Documents/dictation_notes.txt
+local dictationFile = os.getenv("HOME") .. "/Documents/dictation_notes.txt"
+local recordingToFile = false
+local wavFile2 = "/tmp/mic_dictation_file.wav"
+local textFile2 = "/tmp/mic_dictation_file.tmp"
+local recordJob2 = nil
+
+hs.hotkey.bind({"ctrl", "alt"}, "1", function()
+  local output = hs.audiodevice.defaultOutputDevice()
+  if not recordingToFile then
+    recordingToFile = true
+    output:setMuted(true)
+    hs.alert.show("🎙 Recording to file...")
+    recordJob2 = hs.task.new("/opt/homebrew/bin/sox", nil,
+      {"-t", "coreaudio", "MacBook Air Microphone", "-r", "16000", "-c", "1", "-b", "16", wavFile2})
+    recordJob2:start()
+  else
+    recordingToFile = false
+    output:setMuted(false)
+    hs.alert.show("⏳ Transcribing to file...")
+    recordJob2:terminate()
+
+    hs.timer.doAfter(1.5, function()
+      hs.task.new("/bin/sh", function(code, stdout, stderr)
+        local text = (stdout or ""):match("^%s*(.-)%s*$")
+        if text and #text > 0 then
+          local f = io.open(textFile2, "w")
+          f:write(text)
+          f:close()
+
+          local pyScript = [[
+import json, urllib.request, os, sys
+
+text = open(']] .. textFile2 .. [[').read().strip()
+data = json.dumps({
+  'model': 'llama-3.3-70b-versatile',
+  'messages': [
+    {'role': 'system', 'content': 'You are a transcription corrector. Fix only obvious speech-to-text errors such as wrong words that sound similar (e.g. "tick" instead of "take"). Do not rephrase or add anything. Return only the corrected text.'},
+    {'role': 'user', 'content': text}
+  ]
+}).encode()
+
+req = urllib.request.Request(
+  'https://api.groq.com/openai/v1/chat/completions',
+  data=data,
+  headers={
+    'Authorization': 'Bearer ' + os.environ['GROQ_API_KEY'],
+    'Content-Type': 'application/json'
+  }
+)
+resp = json.loads(urllib.request.urlopen(req).read())
+print(resp['choices'][0]['message']['content'], end='')
+]]
+
+          hs.task.new("/bin/sh", function(code2, stdout2, stderr2)
+            local cleaned = (stdout2 or ""):match("^%s*(.-)%s*$")
+            local final = (cleaned and #cleaned > 0 and cleaned ~= "null") and cleaned or text
+            local df = io.open(dictationFile, "a")
+            df:write(final .. "\n\n")
+            df:close()
+            hs.alert.show("✅ Saved to dictation_notes.txt")
+            os.remove(wavFile2)
+            os.remove(textFile2)
+          end, {"-c", "source ~/.zshrc && python3 -c '" .. pyScript:gsub("'", "'\\''") .. "'"}):start()
+
+        else
+          hs.alert.show("❌ No transcription")
+          os.remove(wavFile2)
+        end
+      end, {"-c", "/opt/homebrew/bin/whisper-cli -m '" .. whisperModel .. "' -f '" .. wavFile2 .. "' --no-timestamps -l auto 2>/dev/null"}):start()
+    end)
+  end
+end)
+
+-- ctrl+option+grave_accent → open dictation_notes.txt
+hs.hotkey.bind({"ctrl", "alt"}, "`", function()
+  hs.execute("open " .. dictationFile)
+end)

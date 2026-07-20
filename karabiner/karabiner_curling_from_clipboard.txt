@@ -1,0 +1,24 @@
+    {
+            "from": {
+                "key_code": "c",
+                "modifiers": { "mandatory": ["left_control", "command"] }
+            },
+            "to": [{ "shell_command": "curl -s https://clipboard-manager-three.vercel.app/api/saved-content | /Users/stanleytan/anaconda3/bin/python3 -c \"import sys,json; print(json.load(sys.stdin)['content'])\" | pbcopy && osascript -e 'display notification \"Saved content copied to clipboard\" with title \"Clipboard Manager\"'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "z",
+                "modifiers": { "mandatory": ["left_control", "command"] }
+            },
+            "to": [{ "shell_command": "osascript -e 'text returned of (display dialog \"Enter target file path:\" default answer \"~/\")' > ~/.active_doc && osascript -e 'display notification \"Target set: \" & (do shell script \"cat ~/.active_doc\") with title \"Active Doc\"'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "x",
+                "modifiers": { "mandatory": ["left_control", "command"] }
+            },
+            "to": [{ "shell_command": "TARGET=$(cat ~/.active_doc) && pbpaste >> \"$TARGET\" && osascript -e 'display notification \"Appended to: \" & (do shell script \"cat ~/.active_doc\") with title \"Clipboard Appended\"'" }],
+            "type": "basic"
+        },

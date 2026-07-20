@@ -1,0 +1,27 @@
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "3" },
+            "to": [
+                { "key_code": "c", "modifiers": ["command"] },
+                { "shell_command": "sleep 0.2 && /Users/stanleytan/Desktop/admin_code/clipboard_append.sh" }
+            ],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "name": "mouse_button_mode",
+                    "type": "variable_if",
+                    "value": 1
+                }
+            ],
+            "from": { "key_code": "4" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate' -e 'tell application \"Terminal\" to do script \"/Users/stanleytan/Desktop/admin_code/clipboard_clear.sh\"'" }],
+            "type": "basic"
+        },

@@ -1,0 +1,85 @@
+PLAN: Replace the two caps_lock toggle rules (mouse_button_mode on/off) with a
+single rule that remaps caps_lock → left_control+left_option (held modifier).
+Then add 4 action rules using mandatory: ["left_control", "left_option"].
+Result: caps_lock+` / 1 / 2 / 3 works directly, no mode toggle needed.
+
+---
+
+STEP 1 — Replace the two existing caps_lock rules (lines ~518-561 in karabiner.json)
+with this single rule:
+
+        {
+            "from": {
+                "key_code": "caps_lock",
+                "modifiers": { "optional": ["any"] }
+            },
+            "to": [{ "key_code": "left_control", "modifiers": ["left_option"] }],
+            "type": "basic"
+        },
+
+NOTE: This also makes the old bare-key mouse_button_mode rules (1, 2, 3, grave,
+left_option, 4, 5) dead — they relied on variable_if mouse_button_mode=1.
+Those can be removed or left harmlessly (they'll never fire since the mode is never set).
+
+---
+
+STEP 2 — Add these 6 action rules (insert before the "cmd+e" rule):
+
+        
+        {
+            "from": {
+                "key_code": "1",
+                "modifiers": { "mandatory": ["left_control", "left_option"] }
+            },
+            "to": [
+                {
+                    "key_code": "c",
+                    "modifiers": ["command"]
+                },
+                { "shell_command": "sleep 0.2 && /Users/stanleytan/Desktop/admin_code/clipboard_append.sh 'Copied selected → append'" }
+            ],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "2",
+                "modifiers": { "mandatory": ["left_control", "left_option"] }
+            },
+            "to": [{ "shell_command": "/Users/stanleytan/Desktop/admin_code/clipboard_append.sh 'Clipboard → append'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "3",
+                "modifiers": { "mandatory": ["left_control", "left_option"] }
+            },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate' -e 'tell application \"Terminal\" to do script \"/Users/stanleytan/Desktop/admin_code/clipboard_clear.sh\"'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "4",
+                "modifiers": { "mandatory": ["left_control", "left_option"] }
+            },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate' -e 'tell application \"Terminal\" to do script \"/Users/stanleytan/Desktop/admin_code/clipboard_collect_split.sh\"'" }],
+            "type": "basic"
+        },
+        {
+            "from": {
+                "key_code": "5",
+                "modifiers": { "mandatory": ["left_control", "left_option"] }
+            },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate' -e 'tell application \"Terminal\" to do script \"/Users/stanleytan/Desktop/admin_code/clipboard_chunk_tabs.sh\"'" }],
+            "type": "basic"
+        },
+
+---
+
+FINAL MAPPING:
+  caps_lock (held) = left_control + left_option
+  caps_lock + `    →  left click (button1)
+  caps_lock + 1    →  Cmd+C then clipboard_append.sh (copy selected → append)
+  caps_lock + 2    →  clipboard_append.sh (append current clipboard)
+  caps_lock + 3    →  clipboard_clear.sh (opens Terminal)
+  caps_lock + 4    →  clipboard_collect_split.sh (opens Terminal)
+  caps_lock + 5    →  clipboard_chunk_tabs.sh (opens Terminal)

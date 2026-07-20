@@ -1,0 +1,174 @@
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "9" },
+            "to": [{ "key_code": "up_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "0" },
+            "to": [{ "key_code": "down_arrow" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "hyphen" },
+            "to": [{ "key_code": "return_or_enter" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "8" },
+            "to": [{ "key_code": "period" }],
+            "type": "basic"
+        },
+        {
+            "from": { "key_code": "f2" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Commander One\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "f" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Finder\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "t" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "s" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Sublime Text\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "e" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"TextEdit\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "c" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Google Chrome\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "n" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Numbers\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "x" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Microsoft Excel\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "w" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Microsoft Word\" to activate'" }],
+            "type": "basic"
+        },
+        {
+            "conditions": [
+                {
+                    "bundle_identifiers": [
+                        "^com\\.eltima\\.cmd1\\.mas$"
+                    ],
+                    "type": "frontmost_application_if"
+                }
+            ],
+            "from": { "key_code": "y" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Typora\" to activate'" }],
+            "type": "basic"
+        }

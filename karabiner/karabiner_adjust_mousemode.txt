@@ -1,0 +1,42 @@
+{
+    "conditions": [{ "name": "mouse_button_mode", "type": "variable_unless", "value": 1 }],
+    "from": {
+        "key_code": "left_option",
+        "modifiers": { "optional": ["any"] }
+    },
+    "to": [
+        { "set_variable": { "name": "mouse_button_mode", "value": 1 } },
+        { "shell_command": "osascript -e 'display notification \"Mouse mode ON\" with title \"Karabiner\"'" }
+    ],
+    "type": "basic"
+},
+{
+    "conditions": [{ "name": "mouse_button_mode", "type": "variable_if", "value": 1 }],
+    "from": {
+        "key_code": "left_option",
+        "modifiers": { "optional": ["any"] }
+    },
+    "to": [
+        { "set_variable": { "name": "mouse_button_mode", "value": 0 } },
+        { "shell_command": "osascript -e 'display notification \"Mouse mode OFF\" with title \"Karabiner\"'" }
+    ],
+    "type": "basic"
+},
+{
+    "conditions": [{ "name": "mouse_button_mode", "type": "variable_if", "value": 1 }],
+    "from": { "key_code": "1" },
+    "to": [{ "pointing_button": "button1" }],
+    "type": "basic"
+},
+{
+    "conditions": [{ "name": "mouse_button_mode", "type": "variable_if", "value": 1 }],
+    "from": { "key_code": "2" },
+    "to": [{ "pointing_button": "button2" }],
+    "type": "basic"
+},
+{
+    "conditions": [{ "name": "mouse_button_mode", "type": "variable_if", "value": 1 }],
+    "from": { "key_code": "right_command" },
+    "to": [{ "pointing_button": "button1" }],
+    "type": "basic"
+}
