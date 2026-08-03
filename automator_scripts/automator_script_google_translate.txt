@@ -1,0 +1,20 @@
+on run {input, parameters}
+    -- Check if input text is provided; if not, fall back to clipboard content
+    if input is not "" then
+        set fullText to input as text
+    else
+        set fullText to the clipboard
+    end if
+
+    -- Check if fullText is empty after choosing input or clipboard
+    if fullText is not "" then
+        -- Escape single quotes for shell safety
+        set escapedText to do shell script "printf %s " & quoted form of fullText
+
+        -- Call the Python script with the text as an argument
+        do shell script "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/Documents/technical/python/textToSpeech/google_translate.py " & quoted form of escapedText
+    else
+        -- Display a message if no text is available in input or clipboard
+        display dialog "No text selected or clipboard is empty." buttons {"OK"} default button "OK"
+    end if
+end run

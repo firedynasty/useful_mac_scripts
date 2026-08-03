@@ -1,0 +1,51 @@
+-- WORKING SCRIPT: Google Translate Quick Action / Shortcuts
+-- Tested and confirmed working: 2026-08-02
+--
+-- SETUP OPTIONS:
+--   A) Automator Quick Action: receives "text" from "any application" → Run AppleScript
+--   B) Shortcuts: paste into "Run AppleScript" action (works with selected text)
+--
+-- LESSONS LEARNED DURING DEBUGGING:
+--
+-- 1. DO NOT use inline Python -c in AppleScript. Shell escaping breaks with nested quotes:
+--       BROKEN: do shell script "python3 -c \"import urllib.parse...\"" & quoted form of text
+--       FIX: Call an external .py file instead.
+--
+-- 2. DO use "printf %s" + quoted form of escapedText pattern for shell safety:
+--       set escapedText to do shell script "printf %s " & quoted form of fullText
+--       do shell script "python3 /path/to/script.py " & quoted form of escapedText
+--
+-- 3. In Shortcuts, "Get text from Shortcut Input" passes empty/invisible junk as input
+--    when no text is selected — input is not "" evaluates TRUE but input as text gives "".
+--    This is a Shortcuts quirk. The clipboard fallback does not help if clipboard is also empty.
+--    Solution: test with actual selected text, or use as Automator Quick Action Service instead.
+--
+-- 4. display notification is unreliable for debugging in Shortcuts/Automator context.
+--    Use: do shell script "echo 'msg' >> /tmp/debug.log" then cat /tmp/debug.log in terminal.
+--
+-- PYTHON SCRIPT: /Users/stanleytan/Documents/technical/python/textToSpeech/google_translate.py
+--   - URL-encodes text with urllib.parse.quote
+--   - Opens: https://translate.google.com/?sl=yue&tl=en&text={encoded}&op=translate
+--   - sl=yue (Cantonese source), tl=en (English target)
+--   - Uses subprocess.run(["open", "-a", "Google Chrome", url])
+
+on run {input, parameters}
+    -- Check if input text is provided; if not, fall back to clipboard content
+    if input is not "" then
+        set fullText to input as text
+    else
+        set fullText to the clipboard
+    end if
+
+    -- Check if fullText is empty after choosing input or clipboard
+    if fullText is not "" then
+        -- Escape single quotes for shell safety
+        set escapedText to do shell script "printf %s " & quoted form of fullText
+
+        -- Call the Python script with the text as an argument
+        do shell script "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/Documents/technical/python/textToSpeech/google_translate.py " & quoted form of escapedText
+    else
+        -- Display a message if no text is available in input or clipboard
+        display dialog "No text selected or clipboard is empty." buttons {"OK"} default button "OK"
+    end if
+end run
