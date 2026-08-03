@@ -28,9 +28,12 @@ notes=$(awk -v n="$urlLineNum" 'NR>n+1' "$txtFile" | sed '/./,$!d')
 
 dir="${txtFile%/*}"
 dateStr=$(date +%m%d)
-safeTitle=$(echo "${title:-video}" | sed 's/[^a-zA-Z0-9 _-]//g' | tr -s ' ' | sed 's/ /_/g' | cut -c1-50)
+txtBase=$(basename "$txtFile" .txt)
+txtBase="${txtBase%_timestamps}"
+safeTitle=$(echo "$txtBase" | sed 's/[^a-zA-Z0-9 _-]//g' | tr -s ' ' | sed 's/ /_/g' | cut -c1-50)
 outDir="${dir}/${dateStr}-${safeTitle}_frames"
 mkdir -p "$outDir"
+infoName="$(basename "$outDir" | sed 's/^[0-9]*-//' | cut -c1-30).txt"
 
 # ── download video ────────────────────────────────────────────────────────────
 
@@ -49,7 +52,7 @@ videoFile=$(find "$tmpdir" -maxdepth 1 -name "video.*" | head -1)
 
 # ── write info.txt ────────────────────────────────────────────────────────────
 
-echo "Writing info.txt..."
+echo "Writing $infoName..."
 /Users/stanleytan/anaconda3/bin/yt-dlp --no-playlist --skip-download \
     --print 'Title: %(title)s' \
     --print 'Channel: %(channel)s' \
@@ -60,25 +63,25 @@ echo "Writing info.txt..."
     --print '' \
     --print 'Description:' \
     --print '%(description)s' \
-    "$url" > "$outDir/info.txt" 2>/dev/null
+    "$url" > "$outDir/$infoName" 2>/dev/null
 
 if [[ -n "$notes" ]]; then
-    printf '\n\nNotes:\n%s\n' "$notes" >> "$outDir/info.txt"
+    printf '\n\nNotes:\n%s\n' "$notes" >> "$outDir/$infoName"
 fi
 
 # ── extract frames ────────────────────────────────────────────────────────────
 
 echo "Extracting frames..."
-n=1
 echo "$tsLine" | tr ',' '\n' | while IFS= read -r ts || [[ -n "$ts" ]]; do
     ts=$(echo "$ts" | tr -d '[:space:]')
     [[ -z "$ts" ]] && continue
     secs=$(echo "$ts" | awk -F: '{if(NF==3) print $1*3600+$2*60+$3; else print $1*60+$2}')
-    while [[ -e "${outDir}/frame_${n}.jpg" ]]; do n=$((n+1)); done
+    tsName=$(echo "$ts" | awk -F: '{if(NF==3) printf "%02dh%02dm%02ds",$1,$2,$3; else printf "%02dm%02ds",$1,$2}')
+    framePrefix=$(echo "$safeTitle" | cut -c1-30)
+    frameName="${framePrefix}_${tsName}.jpg"
     /opt/homebrew/bin/ffmpeg -nostdin -ss "$secs" -i "$videoFile" -frames:v 1 -q:v 2 \
-        "${outDir}/frame_${n}.jpg" 2>/dev/null
-    echo "  frame_${n}.jpg  @ $ts"
-    n=$((n+1))
+        "${outDir}/${frameName}" 2>/dev/null
+    echo "  ${frameName}  @ $ts"
 done
 
 echo ""
