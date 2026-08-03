@@ -1,0 +1,44 @@
+set filelist to {}
+set otherCount to 0
+set choiceDest to ""
+
+tell application "Finder"
+    set filelist to selection as alias list
+    if filelist is {} then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set frontID to id of front Finder window
+    set others to (every Finder window whose id is not frontID)
+    set otherCount to count others
+
+    if otherCount is 1 then
+        set choiceDest to target of (item 1 of others)
+    else if otherCount > 1 then
+        set destNames to {}
+        repeat with w in others
+            set end of destNames to (name of w)
+        end repeat
+        set choice to (choose from list destNames with prompt "Move items to which location?" without multiple selections allowed)
+        if choice is false then return
+        set choiceDest to target of (first Finder window whose name is (item 1 of choice))
+    end if
+end tell
+
+if otherCount is 0 then
+    set shellScript to ""
+    repeat with selectedFile in filelist
+        set filePath to POSIX path of selectedFile
+        set shellScript to shellScript & "mv " & quoted form of filePath & " .;" & linefeed
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+else
+    tell application "Finder"
+        move filelist to choiceDest
+    end tell
+end if
