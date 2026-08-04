@@ -72,13 +72,15 @@ fi
 # ── extract frames ────────────────────────────────────────────────────────────
 
 echo "Extracting frames..."
+idx=0
 echo "$tsLine" | tr ',' '\n' | while IFS= read -r ts || [[ -n "$ts" ]]; do
     ts=$(echo "$ts" | tr -d '[:space:]')
     [[ -z "$ts" ]] && continue
+    idx=$((idx+1))
     secs=$(echo "$ts" | awk -F: '{if(NF==3) print $1*3600+$2*60+$3; else print $1*60+$2}')
     tsName=$(echo "$ts" | awk -F: '{if(NF==3) printf "%02dh%02dm%02ds",$1,$2,$3; else printf "%02dm%02ds",$1,$2}')
     framePrefix=$(echo "$safeTitle" | cut -c1-30)
-    frameName="${framePrefix}_${tsName}.jpg"
+    frameName="${framePrefix}_${tsName}_${idx}.jpg"
     /opt/homebrew/bin/ffmpeg -nostdin -ss "$secs" -i "$videoFile" -frames:v 1 -q:v 2 \
         "${outDir}/${frameName}" 2>/dev/null
     echo "  ${frameName}  @ $ts"
