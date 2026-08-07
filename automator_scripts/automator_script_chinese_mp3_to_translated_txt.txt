@@ -1,0 +1,24 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+    set pyScript to "/Users/stanleytan/Documents/technical/python/create_subtitles/mp3_to_translated_txt.py"
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- Swap .mp3 extension for .txt
+        set outputPath to do shell script "echo " & quoted form of filePath & " | sed 's/\\.mp3$/.txt/'"
+
+        set shellScript to shellScript & "echo '=== Transcribing & Translating: " & filePath & " ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 " & quoted form of pyScript & " -i " & quoted form of filePath & " -o " & quoted form of outputPath & " ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

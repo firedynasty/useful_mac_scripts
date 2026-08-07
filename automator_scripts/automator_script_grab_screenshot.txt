@@ -1,0 +1,45 @@
+on run {input, parameters}
+    -- Determine target directory from input or active Finder window
+    if (count of input) > 0 then
+        set targetItem to item 1 of input as alias
+
+        tell application "Finder"
+            set itemClass to class of item targetItem
+            if itemClass is folder or itemClass is disk then
+                set targetDir to POSIX path of targetItem
+            else
+                set parentFolder to (container of targetItem) as alias
+                set targetDir to POSIX path of parentFolder
+            end if
+        end tell
+    else
+        tell application "Finder"
+            try
+                set currentFolder to (target of front window) as alias
+                set targetDir to POSIX path of currentFolder
+            on error
+                display dialog "No folder was selected and no Finder window is open." buttons {"OK"} default button "OK"
+                return
+            end try
+        end tell
+    end if
+
+    -- Strip trailing slash
+    if targetDir ends with "/" then
+        set targetDir to text 1 thru -2 of targetDir
+    end if
+
+    -- Find the latest screenshot on the Desktop
+    set latestScreenshot to do shell script "ls -t ~/Desktop/Screenshot\\ *.png 2>/dev/null | head -1"
+
+    if latestScreenshot is "" then
+        display dialog "No screenshots found on the Desktop." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Copy it to the target directory
+    do shell script "cp " & quoted form of latestScreenshot & " " & quoted form of targetDir
+
+    set screenshotName to do shell script "basename " & quoted form of latestScreenshot
+    display notification screenshotName & " → " & targetDir with title "Screenshot Copied"
+end run

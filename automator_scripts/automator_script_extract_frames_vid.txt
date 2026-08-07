@@ -1,0 +1,44 @@
+on run {input, parameters}
+    if (count of input) > 0 then
+        set txtFile to POSIX path of (choose file with prompt "Select timestamps file (e.g. 1:00,2:00,3:15):" of type {"txt"})
+
+        set shellScript to ""
+
+        repeat with selectedFile in input
+            set filePath to POSIX path of selectedFile
+
+            set shellScript to shellScript & "f=" & quoted form of filePath & "; " & ¬
+                "basename=\"${f##*/}\"; basename=\"${basename%.*}\"; " & ¬
+                "dir=\"${f%/*}\"; " & ¬
+                "dateStr=$(date +%m%d); " & ¬
+                "outDir=\"${dir}/${dateStr}-${basename}_frames\"; " & ¬
+                "mkdir -p \"$outDir\"; " & ¬
+                "vidId=$(echo \"$basename\" | sed -n 's/.*\\[\\([^]]*\\)\\].*/\\1/p'); " & ¬
+                "if [ -n \"$vidId\" ]; then " & ¬
+                "/Users/stanleytan/anaconda3/bin/yt-dlp --skip-download --print 'Title: %(title)s' --print 'Channel: %(channel)s' --print 'Upload Date: %(upload_date>%Y-%m-%d)s' --print 'Duration: %(duration_string)s' --print 'View Count: %(view_count)s' --print 'URL: %(webpage_url)s' --print '' --print 'Description:' --print '%(description)s' \"https://www.youtube.com/watch?v=${vidId}\" > \"${outDir}/info.txt\" 2>/dev/null; " & ¬
+                "fi; " & ¬
+                "tsLine=$(head -1 " & quoted form of txtFile & "); " & ¬
+                "n=1; " & ¬
+                "echo \"$tsLine\" | tr ',' '\\n' | while IFS= read -r ts || [ -n \"$ts\" ]; do " & ¬
+                "ts=$(echo \"$ts\" | tr -d '[:space:]'); " & ¬
+                "[ -z \"$ts\" ] && continue; " & ¬
+                "secs=$(echo \"$ts\" | awk -F: '{if(NF==3) print $1*3600+$2*60+$3; else print $1*60+$2}'); " & ¬
+                "while [ -e \"${outDir}/frame_${n}.jpg\" ]; do n=$((n+1)); done; " & ¬
+                "/opt/homebrew/bin/ffmpeg -nostdin -ss \"$secs\" -i \"$f\" -frames:v 1 -q:v 2 \"${outDir}/frame_${n}.jpg\"; " & ¬
+                "n=$((n+1)); " & ¬
+                "done; " & ¬
+                "notesSection=$(sed -n '/^---$/,$ p' " & quoted form of txtFile & " | tail -n +2); " & ¬
+                "if [ -n \"$notesSection\" ]; then " & ¬
+                "printf '\\n\\nNotes:\\n%s\\n' \"$notesSection\" >> \"${outDir}/info.txt\"; " & ¬
+                "fi; " & ¬
+                "echo '=== Done ===' " & linefeed
+        end repeat
+
+        tell application "Terminal"
+            activate
+            do script shellScript in front window
+        end tell
+    else
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+    end if
+end run

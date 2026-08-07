@@ -1,0 +1,47 @@
+on run {input, parameters}
+    -- Determine target directory from input or active Finder window
+    if (count of input) > 0 then
+        set targetItem to item 1 of input as alias
+
+        tell application "Finder"
+            set itemClass to class of item targetItem
+            if itemClass is folder or itemClass is disk then
+                set targetDir to POSIX path of targetItem
+            else
+                set parentFolder to (container of targetItem) as alias
+                set targetDir to POSIX path of parentFolder
+            end if
+        end tell
+    else
+        tell application "Finder"
+            try
+                set currentFolder to (target of front window) as alias
+                set targetDir to POSIX path of currentFolder
+            on error
+                display dialog "No folder was selected and no Finder window is open." buttons {"OK"} default button "OK"
+                return
+            end try
+        end tell
+    end if
+
+    -- Strip trailing slash
+    if targetDir ends with "/" then
+        set targetDir to text 1 thru -2 of targetDir
+    end if
+
+    set portResult to display dialog "Enter port number:" default answer "8000" buttons {"Cancel", "OK"} default button "OK"
+    if button returned of portResult is "Cancel" then return
+    set portNum to text returned of portResult
+
+    set shellScript to "cd " & quoted form of targetDir & " && " & ¬
+        "cp /Users/stanleytan/documents/technical/github/vercel_textviewer/phpAppForBluehost/index.php . && " & ¬
+        "echo 'Serving: " & targetDir & "' && " & ¬
+        "echo 'http://localhost:" & portNum & "' && " & ¬
+        "open http://localhost:" & portNum & " && " & ¬
+        "php -S localhost:" & portNum
+
+    tell application "Terminal"
+        activate
+        do script shellScript
+    end tell
+end run

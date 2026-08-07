@@ -1,0 +1,27 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No file was selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set selectedFile to item 1 of input
+    set filePath to POSIX path of selectedFile
+
+    -- Get just the filename (no directory, no extension)
+    set baseName to do shell script "basename " & quoted form of filePath & " | sed 's/\\.[^.]*$//'"
+
+    -- Extract content inside the first [...] using sed (macOS-compatible)
+    set bracketContent to do shell script "echo " & quoted form of baseName & " | sed 's/.*\\[\\([^]]*\\)\\].*/\\1/'"
+
+    if bracketContent is "" then
+        display dialog "No bracketed content found in filename: " & baseName buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set youtubeURL to "https://www.youtube.com/watch?v=" & bracketContent
+
+    tell application "Google Chrome"
+        activate
+        open location youtubeURL
+    end tell
+end run

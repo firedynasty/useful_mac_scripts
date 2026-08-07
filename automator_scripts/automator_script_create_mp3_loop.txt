@@ -1,0 +1,49 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Ask for start, end, and optional repeat count (defaults to 1)
+    set rawInput to text returned of (display dialog "Start time, End time, [Times to loop — optional, default 1]" & return & "e.g.  1:30, 1:44   or   1:30, 1:44, 3" default answer "1:30, 1:44" buttons {"Cancel", "OK"} default button "OK")
+
+    -- Split by comma
+    set AppleScript's text item delimiters to ","
+    set parts to text items of rawInput
+    set AppleScript's text item delimiters to ""
+
+    if (count of parts) is less than 2 or (count of parts) is greater than 3 then
+        display dialog "Please enter 2 or 3 values separated by commas." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set startTime to text item 1 of parts
+    set endTime to text item 2 of parts
+    if (count of parts) is 3 then
+        set repeatCount to text item 3 of parts
+    else
+        set repeatCount to "1"
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- cd to the file's directory so output lands there
+        set fileDir to do shell script "dirname " & quoted form of filePath
+
+        -- Pipe the three inputs to mix_mp3.py via printf
+        set shellScript to shellScript & "cd " & quoted form of fileDir & " && "
+        set shellScript to shellScript & "printf " & quoted form of (startTime & "
+" & endTime & "
+" & repeatCount & "
+") & " | "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/Documents/technical/python/audio_tools/mix_mp3.py " & quoted form of filePath & " ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

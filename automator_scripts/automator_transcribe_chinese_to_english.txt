@@ -1,0 +1,136 @@
+-- Transcribe Chinese (Mandarin) Audio → English Text
+-- Right-click Quick Action: "workflow receives audio files in any application"
+-- Translates Mandarin Chinese audio to English text, saves .txt next to the original file
+-- Local: whisper-cpp --translate flag | Cloud: Groq /audio/translations API
+-- Supported natively: mp3, wav, m4a, mp4, webm (others converted via ffmpeg)
+
+on run {input, parameters}
+
+    -- ── Choose transcription method ────────────────────────────────────────────
+    set methodChoice to button returned of (display dialog ¬
+        "Translate Chinese audio → English text:" ¬
+        buttons {"Local (Whisper)", "Groq API"} ¬
+        default button "Groq API" ¬
+        with title "Transcribe 中文 → English")
+
+    -- ── Locate ffmpeg (needed for format conversion in both paths) ─────────────
+    set ffmpegPath to ""
+    repeat with p in {"/opt/homebrew/bin/ffmpeg", "/usr/local/bin/ffmpeg"}
+        if (do shell script "test -x " & quoted form of p & " && echo yes || echo no") is "yes" then
+            set ffmpegPath to p
+            exit repeat
+        end if
+    end repeat
+
+    -- ── Local whisper setup (only when needed) ─────────────────────────────────
+    if methodChoice is "Local (Whisper)" then
+        set whisperCli to ""
+        repeat with p in {"/opt/homebrew/bin/whisper-cli", "/usr/local/bin/whisper-cli"}
+            if (do shell script "test -x " & quoted form of p & " && echo yes || echo no") is "yes" then
+                set whisperCli to p
+                exit repeat
+            end if
+        end repeat
+        if whisperCli is "" then
+            display notification "whisper-cli not found. Install: brew install whisper-cpp" with title "Transcribe Error"
+            return input
+        end if
+
+        set whisperModel to "/opt/homebrew/share/whisper-cpp/ggml-large-v3.bin"
+        if (do shell script "test -f " & quoted form of whisperModel & " && echo yes || echo no") is "no" then
+            display notification "Model not found: ggml-large-v3.bin. Run: whisper-cpp-download-ggml-model large-v3" with title "Transcribe Error"
+            return input
+        end if
+    end if
+
+    -- ── Process each file ──────────────────────────────────────────────────────
+    repeat with audioFile in input
+        set fileName to "unknown file"
+        try
+            -- Resolve path (handles alias, file refs, or plain strings)
+            set filePath to ""
+            try
+                set filePath to POSIX path of audioFile
+            on error
+                set filePath to audioFile as text
+            end try
+
+            set fileName to do shell script "basename " & quoted form of filePath
+            set fileExt to do shell script "echo " & quoted form of fileName & " | awk -F. '{print tolower($NF)}'"
+            set txtFile to do shell script "echo " & quoted form of filePath & " | sed 's/\\.[^.]*$/.txt/'"
+
+            display notification "Translating: " & fileName with title "Transcribe 中→EN"
+
+            -- ── GROQ API path ─────────────────────────────────────────────────
+            if methodChoice is "Groq API" then
+
+                -- Convert formats Groq doesn't accept natively (flac, ogg, aiff, etc.)
+                set groqNative to {"mp3", "mp4", "wav", "m4a", "webm", "mpga"}
+                set needsConversion to true
+                repeat with fmt in groqNative
+                    if fileExt is (fmt as text) then
+                        set needsConversion to false
+                        exit repeat
+                    end if
+                end repeat
+
+                set uploadPath to filePath
+                set tempCreated to false
+
+                if needsConversion then
+                    if ffmpegPath is "" then
+                        error "ffmpeg required to convert ." & fileExt & ". Install: brew install ffmpeg"
+                    end if
+                    set uploadPath to (do shell script "mktemp /tmp/groq_XXXXXX.wav")
+                    do shell script quoted form of ffmpegPath & " -y -i " & quoted form of filePath & " -ar 16000 -ac 1 -c:a pcm_s16le " & quoted form of uploadPath & " 2>&1 || true"
+                    set tempCreated to true
+                end if
+
+                -- /audio/translations endpoint always outputs English text
+                do shell script "source ~/.zshrc 2>/dev/null; curl -s -X POST https://api.groq.com/openai/v1/audio/translations -H \"Authorization: Bearer $GROQ_API_KEY\" -F " & (quoted form of ("file=@" & uploadPath)) & " -F model=whisper-large-v3 > /tmp/groq_resp.json || true"
+                set transcription to do shell script "python3 -c \"import json; d=json.load(open('/tmp/groq_resp.json')); print(d['text'] if 'text' in d else d.get('error',{}).get('message','Groq API error'))\"; rm -f /tmp/groq_resp.json"
+
+                if tempCreated then
+                    do shell script "rm -f " & quoted form of uploadPath
+                end if
+
+                do shell script "printf '%s\\n' " & quoted form of transcription & " > " & quoted form of txtFile
+
+            -- ── LOCAL WHISPER path ────────────────────────────────────────────
+            else
+
+                -- whisper-cli needs wav; convert everything else
+                set wavPath to filePath
+                set tempWavCreated to false
+
+                if fileExt is not "wav" then
+                    if ffmpegPath is "" then
+                        error "ffmpeg required to convert ." & fileExt & ". Install: brew install ffmpeg"
+                    end if
+                    set wavPath to (do shell script "mktemp /tmp/whisper_XXXXXX.wav")
+                    do shell script quoted form of ffmpegPath & " -y -i " & quoted form of filePath & " -ar 16000 -ac 1 -c:a pcm_s16le " & quoted form of wavPath & " 2>&1 || true"
+                    set tempWavCreated to true
+                end if
+
+                -- -l zh: hint source language | --translate: output English regardless
+                do shell script quoted form of whisperCli & " -m " & quoted form of whisperModel & " -f " & quoted form of wavPath & " --no-timestamps -l zh --translate -otxt 2>&1 || true"
+
+                do shell script "mv " & quoted form of (wavPath & ".txt") & " " & quoted form of txtFile
+
+                if tempWavCreated then
+                    do shell script "rm -f " & quoted form of wavPath
+                end if
+
+            end if
+
+            set txtName to do shell script "basename " & quoted form of txtFile
+            display notification "Saved: " & txtName with title "Transcribe 中→EN"
+
+        on error errMsg
+            display notification (fileName & ": " & errMsg) with title "Transcribe Error"
+            -- continue with next file in batch
+        end try
+    end repeat
+
+    return input
+end run

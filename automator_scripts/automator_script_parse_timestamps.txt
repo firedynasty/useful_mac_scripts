@@ -1,0 +1,18 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set txtFile to POSIX path of selectedFile
+        set shellScript to shellScript & "bash /Users/stanleytan/desktop/admin_code/ytframes.sh " & quoted form of txtFile & "; echo '=== Done ===' " & linefeed
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run
