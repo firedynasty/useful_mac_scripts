@@ -1,0 +1,23 @@
+        {
+            "description": "F1: activate app saved as slot 1",
+            "from": { "key_code": "f1" },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_open_app_pair.applescript f1" }],
+            "type": "basic"
+        },
+        {
+            "description": "F2: activate app saved as slot 2",
+            "from": { "key_code": "f2" },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_open_app_pair.applescript f2" }],
+            "type": "basic"
+        },
+        {
+            "description": "F4: set app pair via dialog (also activates them)",
+            "from": { "key_code": "f4" },
+            "to": [{ "shell_command": "osascript /Users/stanleytan/Desktop/admin_code/for_karabiner_open_app_pair.applescript" }],
+            "type": "basic"
+        },
+        {
+            "from": { "key_code": "f3" },
+            "to": [{ "shell_command": "osascript -e 'tell application \"Terminal\" to activate'" }],
+            "type": "basic"
+        }
