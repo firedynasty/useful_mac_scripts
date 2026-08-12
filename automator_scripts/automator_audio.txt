@@ -5,15 +5,15 @@ on run {input, parameters}
     end if
 
     set shellScript to ""
-    set pyScript to "/Users/stanleytan/Documents/technical/python/create_subtitles/mp3_to_chinese_translated_txt.py"
+    set pyScript to "/Users/stanleytan/Documents/technical/python/create_subtitles/audio_to_text.py"
 
     repeat with selectedFile in input
         set filePath to POSIX path of selectedFile
 
-        -- Swap .mp3 extension for .txt
-        set outputPath to do shell script "echo " & quoted form of filePath & " | sed 's/\\.mp3$/.txt/'"
+        -- Swap extension for .txt
+        set outputPath to do shell script "echo " & quoted form of filePath & " | sed 's/\\.[^.]*$/.txt/'"
 
-        set shellScript to shellScript & "echo '=== Transcribing & Translating: " & filePath & " ===' && "
+        set shellScript to shellScript & "echo '=== Transcribing: " & filePath & " ===' && "
         set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 " & quoted form of pyScript & " -i " & quoted form of filePath & " -o " & quoted form of outputPath & " ; "
     end repeat
 

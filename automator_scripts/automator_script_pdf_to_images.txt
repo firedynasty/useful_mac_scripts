@@ -1,0 +1,41 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set pagePrompt to display dialog "Enter page number to extract (leave empty to extract ALL pages into a folder):" default answer "" buttons {"Cancel", "OK"} default button "OK"
+    set pageNum to text returned of pagePrompt
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+        set baseName to do shell script "f=" & quoted form of filePath & "; echo \"${f%.*}\""
+        set outputDir to quoted form of (baseName & "_images")
+
+        if pageNum is "" then
+            -- Extract all pages into a _images/ folder next to the PDF
+            set shellScript to shellScript & ¬
+                "/Users/stanleytan/anaconda3/bin/python3 " & ¬
+                "/Users/stanleytan/Documents/technical/python/extract_from_pdf/extract_images_from_pdf.py " & ¬
+                "-i " & quoted form of filePath & ¬
+                " -o " & outputDir & ¬
+                " && echo '✅ Done! All pages saved to " & baseName & "_images/' || echo '❌ Conversion failed' ; "
+        else
+            -- Extract only the specified page
+            set shellScript to shellScript & ¬
+                "/Users/stanleytan/anaconda3/bin/python3 " & ¬
+                "/Users/stanleytan/Documents/technical/python/extract_from_pdf/extract_images_from_pdf.py " & ¬
+                "-i " & quoted form of filePath & ¬
+                " -o " & outputDir & ¬
+                " -p " & pageNum & ¬
+                " && echo '✅ Done! Page " & pageNum & " saved to " & baseName & "_images/' || echo '❌ Conversion failed' ; "
+        end if
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

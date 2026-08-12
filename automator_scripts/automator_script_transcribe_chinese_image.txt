@@ -1,0 +1,25 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set shellScript to shellScript & ¬
+            "source ~/.zshrc && " & ¬
+            "/Users/stanleytan/anaconda3/bin/python3 " & ¬
+            "/Users/stanleytan/Documents/technical/python/extract_from_pdf_as_images_chinese/extract_images_openai_txt_chinese.py " & ¬
+            "-i " & quoted form of filePath & ¬
+            " -c" & ¬
+            " && echo '✅ Done! Text copied to clipboard.' || echo '❌ Transcription failed' ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

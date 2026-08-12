@@ -1,0 +1,35 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Prompt for loop count
+    set loopDialog to display dialog "How many times to loop?" default answer "3" buttons {"Cancel", "OK"} default button "OK"
+    if button returned of loopDialog is "Cancel" then return
+    set loopTimes to text returned of loopDialog
+
+    -- Validate: must be a positive integer
+    try
+        set loopNum to loopTimes as integer
+        if loopNum < 1 then error
+    on error
+        display dialog "Please enter a valid number (1 or more)." buttons {"OK"} default button "OK"
+        return
+    end try
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 " & ¬
+            "$HOME/Documents/technical/python/audio_tools/loop_mp3.py " & ¬
+            quoted form of filePath & " " & loopTimes & " && echo '✅ Done!' || echo '❌ Looping failed' ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run
