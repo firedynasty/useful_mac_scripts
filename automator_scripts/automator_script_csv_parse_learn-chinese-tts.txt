@@ -1,0 +1,25 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set shellScript to ""
+    set pyScript to "/Users/stanleytan/Documents/technical/github/vercel_flashcards/python-generate-html-from-csv/script_csv_to_html.py"
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        -- Output: learn-chinese-tts_<name>.html next to the CSV (same directory you're in)
+        set outputPath to do shell script "f=" & quoted form of filePath & "; d=$(dirname \"$f\"); b=$(basename \"$f\" .csv); echo \"$d/learn-chinese-tts_${b}.html\""
+
+        set shellScript to shellScript & "echo '=== Converting: " & filePath & " ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 " & quoted form of pyScript & " " & quoted form of filePath & " -o " & quoted form of outputPath & ¬
+            " && echo '✅ Done: " & outputPath & "' || echo '❌ Conversion failed' ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run
