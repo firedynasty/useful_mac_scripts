@@ -1,0 +1,30 @@
+Changes made 2026-08-14
+=======================
+
+1. REMOVED: ctrl+option+` (grave/backtick) → TextEdit append
+   - Was in Hammerspoon init.lua, not Karabiner
+   - Deleted the hs.hotkey.bind block for it
+
+2. MODIFIED: right_option behavior
+   - OLD: right_option held → right_option, tapped alone → right_command
+   - NEW: right_option held → right_option (modifier), tapped alone → mouse button2 (right click)
+   - right_option + slash → cmd+tab already existed and still works with this setup
+   - Use to_if_alone for button2 so combos still function
+
+3. ADDED: caps+a (ctrl+option+a) → speak clipboard via ElevenLabs TTS
+   - Runs: speak_clipboard_elevenlabs.py
+   - Sources ~/.zshrcenv (lightweight env file, just ELEVENLABS_API_KEY)
+   - Place rule BEFORE existing left_control+a → cmd+a rule in manipulators
+
+4. ADDED: caps+s (ctrl+option+s) → replay saved spoken.mp3
+   - Runs: play_saved_spoken.py
+   - Sources ~/.zshrcenv
+   - Place rule BEFORE existing left_control+s → cmd+s rule in manipulators
+
+Supporting files created:
+   - ~/.zshrcenv — exports ELEVENLABS_API_KEY only (fast to source vs full .zshrc)
+   - ~/Documents/technical/python/textToSpeech/speak_clipboard_elevenlabs.py
+   - ~/Documents/technical/python/textToSpeech/play_saved_spoken.py
+   - ~/Documents/technical/python/textToSpeech/save_spoken.py
+     (saves spoken.mp3 to ~/Downloads with timestamp)
+   - spoken.mp3 always overwrites same file in textToSpeech folder (no buildup)
