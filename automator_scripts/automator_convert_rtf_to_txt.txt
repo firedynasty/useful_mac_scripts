@@ -1,0 +1,20 @@
+on run {input, parameters}
+    if (count of input) > 0 then
+        set shellScript to ""
+
+        repeat with selectedFile in input
+            set filePath to POSIX path of selectedFile
+            set baseName to do shell script "f=" & quoted form of filePath & "; echo \"${f%.*}\""
+            set outputPath to quoted form of (baseName & ".md")
+            set shellScript to shellScript & "/opt/homebrew/bin/pandoc " & quoted form of filePath & " -f rtf -t markdown -o " & outputPath & " && echo 'Done: " & outputPath & "' ; "
+        end repeat
+
+        tell application "Terminal"
+            activate
+            do script shellScript in front window
+        end tell
+
+    else
+        display dialog "No RTF files were selected." buttons {"OK"} default button "OK"
+    end if
+end run
