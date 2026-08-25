@@ -38,7 +38,7 @@ on run {input, parameters}
         "echo 'Serving: " & targetDir & "' && " & ¬
         "echo 'http://localhost:" & portNum & "' && " & ¬
         "open http://localhost:" & portNum & " && " & ¬
-        "php -S localhost:" & portNum
+        "php -S localhost:" & portNum & "; rm -f index.php && echo 'removed index.php'"
 
     tell application "Terminal"
         activate
