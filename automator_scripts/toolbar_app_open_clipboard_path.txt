@@ -1,0 +1,61 @@
+-- Open Clipboard Path in Finder
+-- Save/compile as an .app (Script Editor > Export > Application, or:
+--   osacompile -o "Open Clipboard Path.app" this_file.applescript)
+-- then drag the .app onto the Finder toolbar (hold Cmd while dragging
+-- on newer macOS versions).
+--
+-- Clicking it reads a POSIX path from the clipboard and opens it in Finder.
+-- Folders are opened; files are revealed (selected in their folder).
+--
+-- Works with "append to clipboard" workflows: if the clipboard holds
+-- several newline-separated paths, the LAST non-empty line wins
+-- (the most recently copied path). To use the first line instead,
+-- change "set thePath to t" below to: if thePath is "" then set thePath to t
+
+on run
+	set clipText to the clipboard as text
+	set thePath to ""
+	repeat with ln in paragraphs of clipText
+		set t to my trimText(ln)
+		if t is not "" then set thePath to t
+	end repeat
+
+	if thePath is "" then
+		display dialog "The clipboard doesn't contain a file path." buttons {"OK"} default button 1 with icon caution giving up after 5
+		return
+	end if
+
+	-- Expand ~ to the home folder
+	if thePath is "~" then
+		set thePath to POSIX path of (path to home folder)
+	else if thePath starts with "~/" then
+		set thePath to (POSIX path of (path to home folder)) & (text 3 thru -1 of thePath)
+	end if
+
+	-- Resolve to an alias (fails if the path doesn't exist)
+	try
+		set theAlias to (POSIX file thePath) as alias
+	on error
+		display dialog "No such file or folder:" & return & return & thePath buttons {"OK"} default button 1 with icon stop giving up after 8
+		return
+	end try
+
+	tell application "Finder"
+		activate
+		if (theAlias as string) ends with ":" then
+			open theAlias -- it's a folder
+		else
+			reveal theAlias -- it's a file: show it selected in its folder
+		end if
+	end tell
+end run
+
+on trimText(s)
+	repeat while s starts with " " or s starts with tab
+		set s to text 2 thru -1 of s
+	end repeat
+	repeat while s ends with " " or s ends with tab
+		set s to text 1 thru -2 of s
+	end repeat
+	return s
+end trimText
