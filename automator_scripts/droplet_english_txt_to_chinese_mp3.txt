@@ -1,0 +1,22 @@
+property pipelineDir : "/Users/stanleytan/Documents/technical/python/create_language_video_2"
+property pythonBin : "/Users/stanleytan/anaconda3/bin/python"
+
+on open droppedFiles
+	set inputPath to POSIX path of (item 1 of droppedFiles)
+	set inputDir to do shell script "dirname " & quoted form of inputPath
+	set dialogueOut to inputDir & "/dialogue.txt"
+	set audioOut to inputDir & "/output/"
+
+	set choice to button returned of (display dialog "What do you want to do?" buttons {"Translate Only", "Translate + Audio"} default button "Translate + Audio" with title "Chinese Dialogue")
+
+	set shellScript to "export PATH=/opt/homebrew/bin:$PATH && source $HOME/.zshrc && " & quoted form of pythonBin & " " & quoted form of (pipelineDir & "/translate_dialogue.py") & " -i " & quoted form of inputPath & " -o " & quoted form of dialogueOut
+
+	if choice is "Translate + Audio" then
+		set shellScript to shellScript & " && " & quoted form of pythonBin & " " & quoted form of (pipelineDir & "/step1_tts.py") & " --input " & quoted form of dialogueOut & " --output_dir " & quoted form of audioOut
+	end if
+
+	tell application "Terminal"
+		activate
+		do script shellScript in front window
+	end tell
+end open
