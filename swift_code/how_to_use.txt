@@ -1,0 +1,9 @@
+to use the .swift file
+
+swiftc cursorsize.swift -o cursorsize
+
+then will create curorsize
+
+and to use ./cursorsize 4
+
+open display system settings
