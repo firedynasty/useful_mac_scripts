@@ -1,0 +1,67 @@
+-- Sync Finder to Terminal's Current Directory
+--
+-- SETUP REQUIRED in ~/.zshrc:
+--   1. Before "source $ZSH/oh-my-zsh.sh", add:
+--        DISABLE_AUTO_TITLE="true"
+--   2. After "source $ZSH/oh-my-zsh.sh", add:
+--        precmd() { printf '\e]2;%s\a' "$PWD" }
+--
+-- To build the app:
+--   Open Script Editor, paste this script, then:
+--   File > Export > File Format: Application
+--   (or: osacompile -o "get_front_Terminal_window.app" this_file.applescript)
+
+on run
+	set thePath to ""
+
+	try
+		tell application "Terminal"
+			set thePath to name of front window
+		end tell
+	on error errMsg
+		display dialog "Couldn't read Terminal's window title:" & return & return & errMsg buttons {"OK"} default button 1 with icon stop giving up after 8
+		return
+	end try
+
+	if thePath is "" then
+		display dialog "Terminal's window title is empty — is the shell hook installed?" buttons {"OK"} default button 1 with icon caution giving up after 6
+		return
+	end if
+
+	-- Parse the path out of Terminal's title format:
+	-- "foldername — /full/path — -zsh — 82×42"
+	-- Find the token that starts with "/"
+	set theParsedPath to ""
+	set AppleScript's text item delimiters to " — "
+	set titleParts to text items of thePath
+	set AppleScript's text item delimiters to ""
+	repeat with aPart in titleParts
+		if aPart starts with "/" then
+			set theParsedPath to aPart
+			exit repeat
+		end if
+	end repeat
+
+	if theParsedPath is "" then
+		display dialog "Could not find a path in Terminal's window title:" & return & return & thePath buttons {"OK"} default button 1 with icon stop giving up after 8
+		return
+	end if
+
+	try
+		set theAlias to (POSIX file theParsedPath) as alias
+	on error
+		display dialog "No such folder:" & return & return & theParsedPath buttons {"OK"} default button 1 with icon stop giving up after 8
+		return
+	end try
+
+	tell application "Finder"
+		activate
+		try
+			set target of front Finder window to theAlias
+		on error
+			make new Finder window
+			delay 0.3
+			set target of front Finder window to theAlias
+		end try
+	end tell
+end run
