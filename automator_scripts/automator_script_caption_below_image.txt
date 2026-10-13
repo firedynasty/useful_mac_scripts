@@ -1,0 +1,24 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Prompt once; the same caption is applied to every selected image
+    set captionText to text returned of (display dialog "Caption to add underneath the image:" default answer "" with title "Caption Image" buttons {"Cancel", "Add Caption"} default button "Add Caption")
+    if captionText is "" then return
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set shellScript to shellScript & "echo '=== Captioning image ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/add_subtitle_image/caption_below_image.py " & quoted form of filePath & " " & quoted form of captionText & " ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

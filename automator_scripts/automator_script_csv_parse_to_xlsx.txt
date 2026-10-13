@@ -1,0 +1,19 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- All selected CSVs go into ONE workbook (one sheet each), saved next to the first file
+    set pathArgs to ""
+    repeat with selectedFile in input
+        set pathArgs to pathArgs & " " & quoted form of POSIX path of selectedFile
+    end repeat
+
+    set shellScript to "echo '=== Combining CSVs into xlsx ===' && /Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/textToSpeech/csvs_to_xlsx.py" & pathArgs & " ; "
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run

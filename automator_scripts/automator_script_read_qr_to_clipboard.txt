@@ -1,0 +1,19 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    set pathArgs to ""
+    repeat with selectedFile in input
+        set pathArgs to pathArgs & " " & quoted form of POSIX path of selectedFile
+    end repeat
+
+    -- Runs silently (no Terminal, no dialog); result goes straight to the clipboard
+    try
+        set decoded to do shell script "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/add_subtitle_image/read_qr_to_clipboard.py" & pathArgs
+        display notification decoded with title "QR copied to clipboard"
+    on error
+        display notification "No QR code found in the selected image." with title "Read QR"
+    end try
+end run

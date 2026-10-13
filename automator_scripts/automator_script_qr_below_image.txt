@@ -1,0 +1,29 @@
+on run {input, parameters}
+    if (count of input) is 0 then
+        display dialog "No files were selected." buttons {"OK"} default button "OK"
+        return
+    end if
+
+    -- Default to the clipboard so you can copy text/URL first, then just press Enter
+    set clipText to ""
+    try
+        set clipText to the clipboard as text
+    end try
+
+    set qrContent to text returned of (display dialog "Text to encode in the QR code (encoded exactly as typed):" default answer clipText with title "QR Below Image" buttons {"Cancel", "Add QR"} default button "Add QR")
+    if qrContent is "" then return
+
+    set shellScript to ""
+
+    repeat with selectedFile in input
+        set filePath to POSIX path of selectedFile
+
+        set shellScript to shellScript & "echo '=== Adding QR code ===' && "
+        set shellScript to shellScript & "/Users/stanleytan/anaconda3/bin/python3 /Users/stanleytan/documents/technical/python/add_subtitle_image/qr_below_image.py --raw " & quoted form of filePath & " " & quoted form of qrContent & " ; "
+    end repeat
+
+    tell application "Terminal"
+        activate
+        do script shellScript in front window
+    end tell
+end run
