@@ -1,0 +1,36 @@
+-- Open a New Finder Window at the Current Terminal (or Finder) Path
+--
+-- If Terminal is frontmost: reads the shell's CWD via the TTY.
+-- If Finder is frontmost: reads the target of the front Finder window.
+-- Falls back to home folder if neither yields a path.
+--
+-- To build the app:
+--   Open Script Editor, paste this script, then:
+--   File > Export > File Format: Application
+
+set thePath to missing value
+
+tell application "System Events"
+	set frontApp to name of first application process whose frontmost is true
+end tell
+
+if frontApp is "Terminal" then
+	tell application "Terminal"
+		set ttyPath to tty of selected tab of front window
+	end tell
+	set ttyName to text 6 thru -1 of ttyPath
+	set thePath to do shell script "pid=$(ps -t " & ttyName & " -o pid=,comm= | awk '$2 ~ /(zsh|bash|fish)$/ {print $1}' | head -1); lsof -a -p $pid -d cwd -Fn | sed -n 's/^n//p'"
+else
+	tell application "Finder"
+		if (count of Finder windows) > 0 then
+			set thePath to POSIX path of (target of front Finder window as alias)
+		end if
+	end tell
+end if
+
+if thePath is missing value then set thePath to POSIX path of (path to home folder)
+
+tell application "Finder"
+	make new Finder window to (POSIX file thePath as alias)
+	activate
+end tell
